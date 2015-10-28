@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta charset="utf-8">
+        <title>Palladio-based standalone example</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <!-- Palladio -->
+        <link type="text/css" href="../bower_components/palladio/palladio.css" rel="stylesheet" />
+        <link type="text/css" href="css/standalone.css" rel="stylesheet" />
+
+        <!-- Font Awesome -->
+        <link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+    </head>
+
+    <body>
+        <div ui-view id="main">
+            <div class="row-fluid">
+                <div id="metavis-here" class="col-lg-10 col-md-10 col-xs-10 col-lg-offset-1 col-md-offset-1 col-xs-offset-1"></div>
+            </div>
+        </div>
+
+        <script src="../bower_components/palladio/palladio.js"></script>
+        <script src="../palladio-metavis-component.js"></script>
+
+        <script>
+            var components = startPalladio(['palladioMetavis']);
+
+            components.loadData('sample.json', function() {
+                components.add('metavis', "#metavis-here");
+            });
+        </script>
+
+    </body>
+</html>

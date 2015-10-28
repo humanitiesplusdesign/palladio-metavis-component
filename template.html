@@ -1,0 +1,56 @@
+<div id="main">
+	<div id="table-histograms" class="center-block container-fluid">
+		<div class="table-histogram row" ng-repeat="file in files">
+			<div class="col-md-2">
+				<span class="pull-right">{{file.label}}</span>
+			</div>
+			<div class="col-md-8">
+				<div 
+					style="width: {{85 * file.data.length / maxRecords}}%; background-color: #D3D3D3; height: 10px; margin-top: 5px; display: inline-block">
+				</div>
+				<span style="font-weight: lighter; font-size: smaller">{{file.data.length}} records</span>
+			</div>
+		</div>
+	</div>
+	<div class="clearfix" style="height:50px"></div>
+	<div id="tables" style="overflow-x:visible; white-space: nowrap; margin-bottom: 2px; height: 35px;">
+		<div class="table" ng-repeat="file in files"
+			style="display: inline-block; vertical-align:top; margin-right: 30px;"
+			ng-style="{'width': file.reviewMode ? '900px' : '300px' }">
+			<div class="table-header" style="margin-bottom: 7px; width: 300px">
+				<span class="table-label" style="font-weight: strong; font-size: larger">{{file.label}}</span>
+				<span class="review-label"
+					style="font-weight: strong; font-size: larger; color: red;"
+					ng-click="file.reviewMode = !file.reviewMode">review</span>
+				<span class="pull-right" style="margin-right: 5px;">
+					<input type="checkbox" 
+						ng-model="file.displayType"
+						ng-true-value="true"
+						ng-false-value="false"
+						style="content: 'x'; height: 16px; width: 16px;"></input>
+				</span>
+			</div>
+			<div class="dimension" ng-repeat="field in file.fields"
+				style="overflow:hidden; white-space: nowrap; margin-bottom: 2px; height: 35px;">
+				<div class="dimension-main" style="height: 35px; width: 263px; background-color: #eeeeee; padding: 5px; font-weight: lighter; display: inline-block;">
+					<span class="pull-left" style="margin-top: 2px">{{field.description}}</span>
+					<span class="dimension-specials pull-right">
+						<div class="special-character" ng-repeat="special in field.special"
+							style="height: 25px; width: 25px; display: inline-block; margin-right: 2px; text-align: center; font-size: larger; font-weight: strong; border-radius: 4px;"
+							ng-style="{ 'background-color': field.unassignedSpecialChars.indexOf(special) !== -1 ? '#bbbbbb' : 'red' }">
+							{{special}}
+						</div>
+					</span>
+				</div>
+				<div style="width: 35px; height:35px; display: inline-block; margin-left: -2px;"
+					ng-style="{ 'background-color' : file.displayType ? colors[field.type] : '#eeeeee' }"></div>
+				<div style="width: 600px; height: 35px; display: inline-block; margin-left: -2px">
+					<div ng-repeat="row in file.data"
+						style="height: 35px; margin-right: 1px; display: inline-block;"
+						ng-style="{ width: (599-file.data.length)/file.data.length + 'px', 'background-color': colorCalc(row[field.key], 'error', field.type) }">
+					</div>
+				</div>
+			</div>
+		</div>
+	<div>
+</div>
