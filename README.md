@@ -1,5 +1,5 @@
-# palladio-alluvial-component
-An alluvial visualization and filtering component for Palladio
+# palladio-metavis-component
+An metadata visualization and editing component for Palladio
 
 ```shell
 bower install
