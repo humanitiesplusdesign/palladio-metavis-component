@@ -47,6 +47,10 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 						}
 					};
 
+					scope.numberWithValue = function(file, field) {
+						return file.data.filter(function(d) { return d[field.key] !== null && d[field.key] !== undefined && d[field.key] !== "" }).length;
+					}
+
 					var isBoolean = function(value) {
 						return typeof value == 'boolean';
 					};
