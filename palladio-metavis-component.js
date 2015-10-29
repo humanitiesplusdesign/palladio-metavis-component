@@ -48,14 +48,6 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 						setTimeout(internalUpdate);	
 					}
 
-					scope.toggleTips = function () {
-						function internalUpdate() {
-							$('[data-toggle="tooltip"]:visible').tooltip({ container: 'body' });
-							console.log("Tooltips toggled");
-						}
-						setTimeout(internalUpdate);
-					}
-
 					scope.colorCalc = function(value, calcType, fieldType) {
 						if(calcType === 'error') {
 							if(value === null || value === undefined || value === "") return scope.colors['null'];

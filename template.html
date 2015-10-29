@@ -21,7 +21,7 @@
 					<span class="table-label" style="font-weight: strong; font-size: larger">{{file.label}}</span>
 					<span class="review-label"
 						style="font-weight: strong; font-size: larger; color: red;"
-						ng-click="file.reviewMode = !file.reviewMode; centerTable($event); toggleTips();">review</span>
+						ng-click="file.reviewMode = !file.reviewMode; centerTable($event);">review</span>
 				</span>
 				<span style="width: 35px; padding: 5px">
 					<input type="checkbox" 
@@ -60,7 +60,7 @@
 						ng-show="file.reviewMode">
 					<div ng-repeat="row in file.data"
 						style="height: 35px; margin-right: 1px; display: inline-block;"
-						ng-style="{ width: $index === file.editIndex ? '200px' : (599-file.data.length)/file.data.length + 'px', 'background-color': $index === file.editIndex ? 'white' : colorCalc(row[field.key], 'error', field.type) }"
+						ng-style="{ width: $index === file.editIndex ? '200px' : 3 + 'px', 'background-color': $index === file.editIndex ? 'white' : colorCalc(row[field.key], 'error', field.type) }"
 						ng-click="file.editIndex = $index;">
 						<span class="pull-left" ng-show="$index === file.editIndex">
 							<input type="text" ng-model="row[field.key]"
