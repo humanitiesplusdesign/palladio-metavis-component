@@ -22,10 +22,10 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 
 					scope.files.forEach(function(d) {
 						d.fields.forEach(function(f) {
-							if(f.countable && f.type === "number") {
+							if(f.uniqueKey && f.type === "number") {
 								f.type = 'uniqueNumeric';
 							}
-							if(f.countable && f.type === "text") {
+							if(f.uniqueKey && f.type === "text") {
 								f.type = 'uniqueText';
 							}
 							if(f.uniques.length === 2) {
@@ -41,10 +41,10 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 					});
 
 					scope.colors = {
-						uniqueNumeric: '#F4D23B',
-						uniqueText: '#DBBC34',
-						numeric: '#F18F2B',
-						number: '#F18F2B',
+						uniqueNumeric: '#E0CD29',
+						uniqueText: '#E07129',
+						numeric: '#BBAA1B',
+						number: '#BBAA1B',
 						text: '#BB5A1B',
 						binary0: '#9988C0',
 						binary1: '#CD88BD',
@@ -73,7 +73,9 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 					scope.colorCalc = function(value, calcType, fieldType) {
 						if(calcType === 'error') {
 							if(value === null || value === undefined || value === "") return scope.colors['null'];
-							if(sniff(value) !== fieldType) return scope.colors.mismatch;
+							if(sniff(value) !== fieldType) {
+								return scope.colors.mismatch;
+							}
 							return '#bbbbbb';
 						}
 						if(calcType === 'edit') {
