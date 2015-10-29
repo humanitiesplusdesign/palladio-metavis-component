@@ -19,10 +19,32 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 					scope.files = dataService.getFiles();
 					scope.links = dataService.getLinks();
 					scope.maxRecords = d3.max(scope.files, function(d) { return d.data.length; });
+
+					scope.files.forEach(function(d) {
+						d.fields.forEach(function(f) {
+							if(f.countable && f.type === "number") {
+								f.type = 'uniqueNumeric';
+							}
+							if(f.countable && f.type === "text") {
+								f.type = 'uniqueText';
+							}
+							if(f.uniques.length === 2) {
+								f.type = 'binary0';
+							}
+							if(f.uniques.length > 2 && f.uniques.length < 10 && f.type === 'number') {
+								f.type = 'ordinalNumeric';
+							}
+							if(f.uniques.length > 2 && f.uniques.length < 10 && f.type === 'text') {
+								f.type = 'nominalText';
+							}
+						});
+					});
+
 					scope.colors = {
 						uniqueNumeric: '#F4D23B',
 						uniqueText: '#DBBC34',
 						numeric: '#F18F2B',
+						number: '#F18F2B',
 						text: '#BB5A1B',
 						binary0: '#9988C0',
 						binary1: '#CD88BD',
