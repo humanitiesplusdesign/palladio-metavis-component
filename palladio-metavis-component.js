@@ -97,9 +97,13 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 						}
 					};
 
-					scope.numberWithValue = function(file, field) {
-						return file.data.filter(function(d) { return d[field.key] !== null && d[field.key] !== undefined && d[field.key] !== "" }).length;
+					scope.checkEsc = function(ev) {
+						if(ev.keyCode === 27) { scope.files.forEach(function(f) { f.editIndex = null; }); }
 					}
+
+					scope.numberWithValue = function(file, field) {
+						return file.data.filter(function(d) { return d[field.key] !== null && d[field.key] !== undefined && d[field.key] !== ""; }).length;
+					};
 
 					var isBoolean = function(value) {
 						return typeof value == 'boolean';
