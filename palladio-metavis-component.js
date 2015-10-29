@@ -73,13 +73,26 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 					scope.colorCalc = function(value, calcType, fieldType) {
 						if(calcType === 'error') {
 							if(value === null || value === undefined || value === "") return scope.colors['null'];
-							if(sniff(value) !== fieldType) {
+							if(sniff(value) !== fieldType &&
+								!(sniff(value) === 'number' && (fieldType === 'uniqueNumeric' || fieldType === 'ordinalNumeric' )) &&
+								!(sniff(value) === 'text' && (fieldType === 'uniqueText' || fieldType === 'nominalText')) &&
+								!(sniff(value) === 'text' && fieldType === 'uniqueText') &&
+								!((value.length === 4 || value.length === 7) && fieldType === 'date') &&
+								fieldType !== 'binary0' ) {
+
 								return scope.colors.mismatch;
 							}
 							return '#bbbbbb';
 						}
 						if(calcType === 'edit') {
-							if(sniff(value) !== fieldType) return scope.colors.mismatch;
+							if(sniff(value) !== fieldType &&
+								!(sniff(value) === 'number' && (fieldType === 'uniqueNumeric' || fieldType === 'ordinalNumeric' )) &&
+								!(sniff(value) === 'text' && (fieldType === 'uniqueText' || fieldType === 'nominalText')) &&
+								!(sniff(value) === 'text' && fieldType === 'uniqueText') &&
+								fieldType !== 'binary0' ) {
+
+								return scope.colors.mismatch;
+							}
 							return '#bbbbbb';
 						}
 					};
