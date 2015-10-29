@@ -40,36 +40,46 @@
 				</span>
 			</div>
 			<div class="dimension pull-left" ng-repeat="field in file.fields"
-				style="overflow:hidden; white-space: nowrap; margin-bottom: 2px; height: 35px; display: inline-block; clear: both;">
-				<div class="dimension-main" style="height: 35px; width: 263px; background-color: #eeeeee; padding: 5px; font-weight: lighter; display: inline-block;">
-					<span class="pull-left" style="margin-top: 3px">{{field.description}}</span>
-					<span class="dimension-specials pull-right">
-						<div class="special-character" ng-repeat="special in field.special"
-							style="height: 25px; width: 25px; display: inline-block; margin-right: 2px; text-align: center; font-size: larger; font-weight: strong; border-radius: 4px;"
-							ng-style="{ 'background-color': field.unassignedSpecialChars.indexOf(special) !== -1 ? '#bbbbbb' : '#EC5D57' }">
-							{{special}}
+				style="overflow:hidden; white-space: nowrap; margin-bottom: 2px; height: 35px; display: inline-block; clear: both; left: -30px;">
+				<div style="height: 35px; width: 300px; display: inline-block; left: 0px;">
+					<div class="dimension-main" style="height: 35px; width: 263px; background-color: #eeeeee; padding: 5px; font-weight: lighter; display: inline-block;">
+						<div style="left: 5px; background-color: #eeeeee; padding-left: 5px; padding-right: 5px; border-radius: 4px"
+							ng-style="{ position: calcPosition(file) }">
+							<span class="pull-left" style="margin-top: 3px">{{field.description}}</span>
 						</div>
-					</span>
-				</div>
-				<div style="width: 35px; height:35px; display: inline-block; margin-left: -2px; padding: 5px";
-					ng-style="{ 'background-color' : file.displayType ? colors[field.type] : '#eeeeee' }">
-					<span ng-hide="!file.reviewMode" class="pull-left"
-						style="width: 25px; font-weight: lighter; margin-top: 3px; text-align: center;"
-						ng-style="{ color: file.displayType ? textColors[field.type] : '#444444' }">
-						{{numberWithValue(file, field)}}
-					</span>
+						<span class="dimension-specials pull-right">
+							<div class="special-character" ng-repeat="special in field.special"
+								style="height: 25px; width: 25px; display: inline-block; margin-right: 2px; text-align: center; font-size: larger; font-weight: strong; border-radius: 4px;"
+								ng-style="{ 'background-color': field.unassignedSpecialChars.indexOf(special) !== -1 ? '#bbbbbb' : '#EC5D57' }">
+								{{special}}
+							</div>
+						</span>
+					</div>
+					<div style="width: 35px; height:35px; display: inline-block; margin-left: -2px; padding: 5px";
+						ng-style="{ 'background-color' : file.displayType ? colors[field.type] : '#eeeeee' }">
+						<span ng-hide="!file.reviewMode" class="pull-left"
+							style="width: 25px; font-weight: lighter; margin-top: 3px; text-align: center;"
+							ng-style="{ color: file.displayType ? textColors[field.type] : '#444444' }">
+							{{numberWithValue(file, field)}}
+						</span>
+					</div>
 				</div>
 				<div style="height: 35px; display: inline-block; margin-left: -2px"
 						ng-show="file.reviewMode">
-					<div ng-repeat="row in file.data"
-						style="height: 35px; margin-right: 1px; display: inline-block;"
-						ng-style="{ width: $index === file.editIndex ? '200px' : 3 + 'px', 'background-color': $index === file.editIndex ? 'white' : colorCalc(row[field.key], 'error', field.type) }"
-						ng-click="file.editIndex = $index;">
-						<span class="pull-left" ng-show="$index === file.editIndex">
-							<input type="text" ng-model="row[field.key]"
-								style="width:200px; margin:0px; height: 35px;"
-								ng-style="{ 'color': colorCalc(row[field.key], 'edit', field.type) }"></input>
-						</span>
+					<span ng-show="file.editIndex !== null && file.editIndex !== undefined"
+						style="height: 35px; display: inline-block; width: 200px; position: relative; float: left;"
+						ng-style="{ left: file.editIndex*4 }">
+						<input type="text" ng-model="file.data[file.editIndex][field.key]"
+							style="width:200px; margin:0px; height: 35px;"
+							ng-style="{ 'color': colorCalc(file.data[file.editIndex][field.key], 'edit', field.type) }"></input>
+					</span>
+					<div style="height:35px; display: inline-block"
+						ng-style="{ 'margin-left': file.editIndex !== null && file.editIndex !== undefined ? '-200px' : '0px' }">
+						<div ng-repeat="row in file.data"
+							style="height: 35px; margin-right: 1px; display: inline-block;"
+							ng-style="{ width: $index === file.editIndex ? '200px' : 3 + 'px', 'background-color': $index === file.editIndex ? 'white' : colorCalc(row[field.key], 'error', field.type) }"
+							ng-click="file.editIndex = $index;">
+						</div>
 					</div>
 				</div>
 			</div>

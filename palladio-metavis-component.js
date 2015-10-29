@@ -88,8 +88,19 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 							var tableNode = ev.currentTarget.parentNode.parentNode.parentNode;
 							tableNode.parentNode.scrollLeft = tableNode.parentNode.scrollLeft - 30 + tableNode.getBoundingClientRect().left;
 						}
-						setTimeout(internalUpdate);	
-					}
+						setTimeout(internalUpdate);
+					};
+
+					scope.calcPosition = function(file) {
+						if($('.table-display')[scope.files.indexOf(file)].getBoundingClientRect().left < 0 &&
+							$('.table-display')[scope.files.indexOf(file)].getBoundingClientRect().right > 500) {
+							
+							return 'fixed';
+						}
+						return 'relative';
+					};
+
+					$('#tables').scroll(function() { scope.$digest(); });
 
 					scope.colorCalc = function(value, calcType, fieldType) {
 						if(calcType === 'error') {
