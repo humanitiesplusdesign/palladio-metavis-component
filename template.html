@@ -13,16 +13,15 @@
 		</div>
 	</div>
 	<div class="clearfix" style="height:50px"></div>
-	<div id="tables" style="overflow-x:visible; white-space: nowrap; margin-bottom: 2px; height: 35px;">
-		<div class="table" ng-repeat="file in files"
-			style="display: inline-block; vertical-align:top; margin-right: 30px;"
-			ng-style="{'width': file.reviewMode ? '900px' : '300px' }">
-			<div class="table-header" style="margin-bottom: 7px; overflow:hidden; white-space: nowrap;">
+	<div id="tables" style="overflow-x:scroll; white-space: nowrap; margin-bottom: 2px; height: 100%; padding-left: 30px">
+		<div class="table-display" ng-repeat="file in files"
+			style="display: inline-block; vertical-align:top; margin-right: 30px;">
+			<div class="table-header pull-left" style="margin-bottom: 7px; overflow:hidden; white-space: nowrap; display: inline-block; clear: both;">
 				<span class="labels" style="width:263px; display:inline-block">
 					<span class="table-label" style="font-weight: strong; font-size: larger">{{file.label}}</span>
 					<span class="review-label"
 						style="font-weight: strong; font-size: larger; color: red;"
-						ng-click="file.reviewMode = !file.reviewMode">review</span>
+						ng-click="file.reviewMode = !file.reviewMode; centerTable($event); toggleTips();">review</span>
 				</span>
 				<span style="width: 35px; padding: 5px">
 					<input type="checkbox" 
@@ -30,12 +29,16 @@
 						style="height: 16px; width: 16px;">
 					</input>
 				</span>
-				<span>
-					Hello world - sort options go here
+				<span ng-init="sortModes=['Map errors and gaps','Map by data types','Sort by values']; sortMode = sortModes[0];"
+						ng-show="file.reviewMode">
+					<span ng-repeat="mode in sortModes" style="margin-left: 10px; margin-right: 10px"
+						ng-style="{ 'color': mode === sortMode ? '#bbbbbb' : '#68ABE5' }">
+						{{mode}}
+					</span>
 				</span>
 			</div>
-			<div class="dimension" ng-repeat="field in file.fields"
-				style="overflow:hidden; white-space: nowrap; margin-bottom: 2px; height: 35px;">
+			<div class="dimension pull-left" ng-repeat="field in file.fields"
+				style="overflow:hidden; white-space: nowrap; margin-bottom: 2px; height: 35px; display: inline-block; clear: both;">
 				<div class="dimension-main" style="height: 35px; width: 263px; background-color: #eeeeee; padding: 5px; font-weight: lighter; display: inline-block;">
 					<span class="pull-left" style="margin-top: 3px">{{field.description}}</span>
 					<span class="dimension-specials pull-right">
@@ -53,10 +56,17 @@
 						{{numberWithValue(file, field)}}
 					</span>
 				</div>
-				<div style="width: 600px; height: 35px; display: inline-block; margin-left: -2px">
+				<div style="height: 35px; display: inline-block; margin-left: -2px"
+						ng-show="file.reviewMode">
 					<div ng-repeat="row in file.data"
 						style="height: 35px; margin-right: 1px; display: inline-block;"
-						ng-style="{ width: (599-file.data.length)/file.data.length + 'px', 'background-color': colorCalc(row[field.key], 'error', field.type) }">
+						ng-style="{ width: $index === file.editIndex ? '200px' : (599-file.data.length)/file.data.length + 'px', 'background-color': $index === file.editIndex ? 'white' : colorCalc(row[field.key], 'error', field.type) }"
+						ng-click="file.editIndex = $index;">
+						<span class="pull-left" ng-show="$index === file.editIndex">
+							<input type="text" ng-model="row[field.key]"
+								style="width:200px; margin:0px; height: 35px;"
+								ng-style="{ 'color': colorCalc(row[field.key], 'edit', field.type) }"></input>
+						</span>
 					</div>
 				</div>
 			</div>

@@ -39,9 +39,30 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 						mismatch: '#EC5D57'
 					};
 
+					scope.centerTable = function(ev) {
+						// Do this async so that page can re-render first and table container can expand.
+						function internalUpdate() {
+							var tableNode = ev.currentTarget.parentNode.parentNode.parentNode;
+							tableNode.parentNode.scrollLeft = tableNode.parentNode.scrollLeft - 30 + tableNode.getBoundingClientRect().left;
+						}
+						setTimeout(internalUpdate);	
+					}
+
+					scope.toggleTips = function () {
+						function internalUpdate() {
+							$('[data-toggle="tooltip"]:visible').tooltip({ container: 'body' });
+							console.log("Tooltips toggled");
+						}
+						setTimeout(internalUpdate);
+					}
+
 					scope.colorCalc = function(value, calcType, fieldType) {
 						if(calcType === 'error') {
 							if(value === null || value === undefined || value === "") return scope.colors['null'];
+							if(sniff(value) !== fieldType) return scope.colors.mismatch;
+							return '#bbbbbb';
+						}
+						if(calcType === 'edit') {
 							if(sniff(value) !== fieldType) return scope.colors.mismatch;
 							return '#bbbbbb';
 						}
