@@ -61,6 +61,27 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 						mismatch: '#EC5D57'
 					};
 
+					scope.textColors = {
+						uniqueNumeric: '#FFFFFF',
+						uniqueText: '#FFFFFF',
+						numeric: '#FFFFFF',
+						number: '#FFFFFF',
+						text: '#FFFFFF',
+						binary0: '#FFFFFF',
+						binary1: '#FFFFFF',
+						ordinalNumeric: '#FFFFFF',
+						nominalText: '#FFFFFF',
+						coordinates: '#FFFFFF',
+						latlong: '#FFFFFF',
+						date: '#FFFFFF',
+						YYYYMMDD: '#FFFFFF',
+						YYYYMM: '#FFFFFF',
+						YYYY: '#FFFFFF',
+						url: '#FFFFFF',
+						'null': '#444444',
+						mismatch: '#FFFFFF'
+					};
+
 					scope.centerTable = function(ev) {
 						// Do this async so that page can re-render first and table container can expand.
 						function internalUpdate() {
