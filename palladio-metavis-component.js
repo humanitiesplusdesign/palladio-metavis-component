@@ -7,7 +7,7 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 
 		componentService.register('metavis', compileStringFunction);
 	}])
-	.directive('palladioMetavis', function (palladioService, dataService) {
+	.directive('palladioMetavis', function (palladioService, dataService, $document) {
 		return {
 			scope : true,
 			templateUrl : '../template.html',
@@ -129,9 +129,11 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 						}
 					};
 
-					scope.checkEsc = function(ev) {
-						if(ev.keyCode === 27) { scope.files.forEach(function(f) { f.editIndex = null; }); }
-					}
+					$document.keydown(function(ev) {
+						scope.$apply(function(s) {
+							if(ev.keyCode === 27) { s.files.forEach(function(f) { f.editIndex = null; }); }
+						})
+					});
 
 					scope.numberWithValue = function(file, field) {
 						return file.data.filter(function(d) { return d[field.key] !== null && d[field.key] !== undefined && d[field.key] !== ""; }).length;
