@@ -17,7 +17,7 @@
 			style="overflow-x:scroll; white-space: nowrap; margin-bottom: 2px; height: 100%; padding-left: 30px">
 		<div class="table-display" ng-repeat="file in files"
 			style="display: inline-block; vertical-align:top; margin-right: 30px;"
-			ng-init="sortModes=['Map errors and gaps','Map by data types','Sort by values']; file.sortMode = sortModes[0];">
+			ng-init="sortModes=['Map errors and gaps','Map by data types','Sort by values']; file.sortMode = sortModes[0]; sortFields(file);">
 			<div class="table-header pull-left" style="margin-bottom: 7px; overflow:hidden; white-space: nowrap; display: inline-block; clear: both;">
 				<span class="labels" style="width:263px; display:inline-block">
 					<span class="table-label" style="font-weight: strong; font-size: larger">{{file.label}}</span>
@@ -34,7 +34,7 @@
 				<span ng-show="file.reviewMode">
 					<span ng-repeat="mode in sortModes" style="margin-left: 10px; margin-right: 10px"
 						ng-style="{ 'color': mode === file.sortMode ? '#bbbbbb' : '#68ABE5' }"
-						ng-click="file.sortMode = mode">
+						ng-click="file.sortMode = mode; file.sortMode === sortModes[2] ? file.editIndex = null : null; sortFields(file);">
 						{{mode}}
 					</span>
 				</span>
@@ -71,13 +71,13 @@
 						ng-style="{ left: file.editIndex*4 }">
 						<input type="text" ng-model="file.data[file.editIndex][field.key]"
 							style="width:200px; margin:0px; height: 35px;"
-							ng-style="{ 'color': colorCalc(file.data[file.editIndex][field.key], 'edit', field.type) }"></input>
+							ng-style="{ 'color': colorCalc(file.data[file.editIndex][field.key], file.sortMode === sortModes[0] ? 'edit' : 'type', field.type) }"></input>
 					</span>
 					<div style="height:35px; display: inline-block"
 						ng-style="{ 'margin-left': file.editIndex !== null && file.editIndex !== undefined ? '-200px' : '0px' }">
-						<div ng-repeat="row in file.data"
+						<div ng-repeat="obj in field.sortedValues"
 							style="height: 35px; margin-right: 1px; display: inline-block;"
-							ng-style="{ width: $index === file.editIndex ? '200px' : 3 + 'px', 'background-color': $index === file.editIndex ? 'white' : colorCalc(row[field.key], 'error', field.type) }"
+							ng-style="{ width: $index === file.editIndex ? '200px' : 3 + 'px', 'background-color': $index === file.editIndex ? 'white' : obj.color }"
 							ng-click="file.sortMode !== sortModes[2] ? file.editIndex = $index : null">
 						</div>
 					</div>

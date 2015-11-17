@@ -39,6 +39,45 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 							}
 						});
 					});
+					
+					scope.sortFields = function(file) {
+						file.fields.forEach(function(f) { scope.sortField(f, file); });
+					}
+					
+					scope.sortField = function(field, file) {
+						switch(file.sortMode) {
+							case 'Map errors and gaps':
+								field.sortedValues = file.data.map(function(d) {
+									return d[field.key];
+								}).map(function(d) {
+									return {
+										value: d,
+										color: scope.colorCalc(d, 'error', field.type)
+									};
+								});
+								break;
+							case 'Map by data types':
+								field.sortedValues = file.data.map(function(d) {
+									return d[field.key];
+								}).map(function(d) {
+									return {
+										value: d,
+										color: scope.colorCalc(d, 'type', field.type)
+									};
+								});
+								break;
+							case 'Sort by values':
+								field.sortedValues = file.data.map(function(d) {
+									return d[field.key];
+								}).map(function(d) {
+									return {
+										value: d,
+										color: scope.colorCalc(d, 'type', field.type)
+									};
+								}).sort(function(a,b) { return a.color < b.color ? -1 : 1; });
+								break;
+						}
+					}
 
 					scope.colors = {
 						uniqueNumeric: '#E0CD29',
@@ -127,6 +166,13 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 							}
 							return '#bbbbbb';
 						}
+						if(calcType === 'type') {
+							if(fieldType === 'ordinalNumeric' && sniff(value) === 'number') {
+								return scope.colors['ordinalNumeric'];
+							} else {
+								return scope.colors[sniff(value)];	
+							}
+						}
 					};
 
 					$document.keydown(function(ev) {
@@ -152,7 +198,7 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 					};
 
 					var isNumber = function(value){
-						return typeof value == 'number'; //|| !isNaN(parseFloat(value));
+						return typeof value == 'number' || RegExp('^\\d*$').test(value);
 					};
 
 					var isObject = function(value){
@@ -201,10 +247,14 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 						if (typeof value === 'undefined' || value === null || value.length === 0) return 'null';
 						if (isObject(value)) return 'object';
 						if (isArray(value)) return 'array';
+						if (isNumber(value) && value.length === 4) { return 'YYYY'; }
 						if (isNumber(value)) return 'number';
 						// String
 						if (isUrlLike(value)) return 'url';
 						//if (isBooleanLike(value)) return 'boolean';
+						if (isDateLike(value) && value.length === 4) return 'YYYY';
+						if (isDateLike(value) && value.length === 7) return 'YYYYMM';
+						// if (isDateLike(value) && value.length === 10) return 'YYYYMMDD';
 						if (isDateLike(value)) return 'date';
 						if (isNumberLike(value)) return 'number';
 						if (isLatLonLike(value)) return 'latlong';
