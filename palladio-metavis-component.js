@@ -12,7 +12,13 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 			scope : true,
 			templateUrl : '../template.html',
 			link : {
-				pre : function(scope, element) { },
+				pre : function(scope, element) {
+					scope.fileForArrowIndexChange = null;
+					
+					scope.clearArrowEffect = function() {
+						scope.fileForArrowIndexChange = null;
+					}
+				},
 
 				post : function(scope, element, attrs) {
 					scope.metadata = dataService.getMetadata();
@@ -174,10 +180,23 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 							}
 						}
 					};
-
+					
+					scope.assignIndexAndFile = function(file, index) {
+						 file.editIndex = index;
+						 scope.fileForArrowIndexChange = file;
+					}
+					
 					$document.keydown(function(ev) {
 						scope.$apply(function(s) {
 							if(ev.keyCode === 27) { s.files.forEach(function(f) { f.editIndex = null; }); }
+							if(ev.keyCode === 37 && scope.fileForArrowIndexChange && scope.fileForArrowIndexChange.editIndex > 0) {
+								ev.preventDefault();
+								scope.fileForArrowIndexChange.editIndex--;
+							}
+							if(ev.keyCode === 39 && scope.fileForArrowIndexChange && scope.fileForArrowIndexChange.editIndex < scope.fileForArrowIndexChange.data.length-1) {
+								ev.preventDefault();
+								scope.fileForArrowIndexChange.editIndex++;
+							}
 						})
 					});
 

@@ -71,6 +71,8 @@
 						ng-style="{ left: file.editIndex*4 }">
 						<input type="text" ng-model="file.data[file.editIndex][field.key]"
 							style="width:200px; margin:0px; height: 35px;"
+							ng-focus="clearArrowEffect()"
+							ng-change="field.sortedValues[file.editIndex].color = colorCalc(file.data[file.editIndex][field.key], file.sortMode === sortModes[0] ? 'edit' : 'type', field.type)"
 							ng-style="{ 'color': colorCalc(file.data[file.editIndex][field.key], file.sortMode === sortModes[0] ? 'edit' : 'type', field.type) }"></input>
 					</span>
 					<div style="height:35px; display: inline-block"
@@ -78,7 +80,7 @@
 						<div ng-repeat="obj in field.sortedValues"
 							style="height: 35px; margin-right: 1px; display: inline-block;"
 							ng-style="{ width: $index === file.editIndex ? '200px' : 3 + 'px', 'background-color': $index === file.editIndex ? 'white' : obj.color }"
-							ng-click="file.sortMode !== sortModes[2] ? file.editIndex = $index : null">
+							ng-click="file.sortMode !== sortModes[2] ? assignIndexAndFile(file, $index) : null">
 						</div>
 					</div>
 				</div>
