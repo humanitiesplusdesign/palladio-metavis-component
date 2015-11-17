@@ -16,7 +16,8 @@
 	<div id="tables" 
 			style="overflow-x:scroll; white-space: nowrap; margin-bottom: 2px; height: 100%; padding-left: 30px">
 		<div class="table-display" ng-repeat="file in files"
-			style="display: inline-block; vertical-align:top; margin-right: 30px;">
+			style="display: inline-block; vertical-align:top; margin-right: 30px;"
+			ng-init="sortModes=['Map errors and gaps','Map by data types','Sort by values']; file.sortMode = sortModes[0];">
 			<div class="table-header pull-left" style="margin-bottom: 7px; overflow:hidden; white-space: nowrap; display: inline-block; clear: both;">
 				<span class="labels" style="width:263px; display:inline-block">
 					<span class="table-label" style="font-weight: strong; font-size: larger">{{file.label}}</span>
@@ -30,10 +31,10 @@
 						style="height: 16px; width: 16px;">
 					</input>
 				</span>
-				<span ng-init="sortModes=['Map errors and gaps','Map by data types','Sort by values']; sortMode = sortModes[0];"
-						ng-show="file.reviewMode">
+				<span ng-show="file.reviewMode">
 					<span ng-repeat="mode in sortModes" style="margin-left: 10px; margin-right: 10px"
-						ng-style="{ 'color': mode === sortMode ? '#bbbbbb' : '#68ABE5' }">
+						ng-style="{ 'color': mode === file.sortMode ? '#bbbbbb' : '#68ABE5' }"
+						ng-click="file.sortMode = mode">
 						{{mode}}
 					</span>
 				</span>
@@ -77,7 +78,7 @@
 						<div ng-repeat="row in file.data"
 							style="height: 35px; margin-right: 1px; display: inline-block;"
 							ng-style="{ width: $index === file.editIndex ? '200px' : 3 + 'px', 'background-color': $index === file.editIndex ? 'white' : colorCalc(row[field.key], 'error', field.type) }"
-							ng-click="file.editIndex = $index;">
+							ng-click="file.sortMode !== sortModes[2] ? file.editIndex = $index : null">
 						</div>
 					</div>
 				</div>
