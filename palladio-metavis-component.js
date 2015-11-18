@@ -7,7 +7,7 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 
 		componentService.register('metavis', compileStringFunction);
 	}])
-	.directive('palladioMetavis', function (palladioService, dataService, $document) {
+	.directive('palladioMetavis', function (palladioService, dataService, parseService, $document) {
 		return {
 			scope : true,
 			templateUrl : '../template.html',
@@ -28,6 +28,13 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 
 					scope.files.forEach(function(d) {
 						d.fields.forEach(function(f) {
+							// Re-parse uniques...
+							var md = parseService.parseColumn(f.key,
+								d.data, f.mvDelimiter,
+								f.hierDelimiter, [], f.type);
+							f.uniques = md.uniques;
+							f.uniqueValues = f.uniques.map(function(u) { return u.key; });
+							
 							if(f.uniqueKey && f.type === "number") {
 								f.type = 'uniqueNumeric';
 							}
@@ -58,7 +65,7 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 								}).map(function(d) {
 									return {
 										value: d,
-										color: scope.colorCalc(d, 'error', field.type)
+										color: scope.colorCalc(d, 'error', field)
 									};
 								});
 								break;
@@ -68,7 +75,7 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 								}).map(function(d) {
 									return {
 										value: d,
-										color: scope.colorCalc(d, 'type', field.type, field.uniques)
+										color: scope.colorCalc(d, 'type', field)
 									};
 								});
 								break;
@@ -78,7 +85,7 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 								}).map(function(d) {
 									return {
 										value: d,
-										color: scope.colorCalc(d, 'type', field.type, field.uniques)
+										color: scope.colorCalc(d, 'type', field)
 									};
 								}).sort(function(a,b) { return a.color < b.color ? -1 : 1; });
 								break;
@@ -147,36 +154,38 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 
 					$('#tables').scroll(function() { scope.$digest(); });
 
-					scope.colorCalc = function(value, calcType, fieldType, uniques) {
+					scope.colorCalc = function(value, calcType, field) {
 						if(calcType === 'error') {
 							if(value === null || value === undefined || value === "") return scope.colors['null'];
-							if(sniff(value) !== fieldType &&
-								!(sniff(value) === 'number' && (fieldType === 'uniqueNumeric' || fieldType === 'ordinalNumeric' )) &&
-								!(sniff(value) === 'text' && (fieldType === 'uniqueText' || fieldType === 'nominalText')) &&
-								!(sniff(value) === 'text' && fieldType === 'uniqueText') &&
-								!((value.length === 4 || value.length === 7) && fieldType === 'date') &&
-								fieldType !== 'binary0' ) {
+							if(sniff(value) !== field.type &&
+								!(sniff(value) === 'number' && (field.type === 'uniqueNumeric' || field.type === 'ordinalNumeric' )) &&
+								!(sniff(value) === 'text' && (field.type === 'uniqueText' || field.type === 'nominalText')) &&
+								!(sniff(value) === 'text' && field.type === 'uniqueText') &&
+								!((value.length === 4 || value.length === 7) && field.type === 'date') &&
+								field.type !== 'binary0' ) {
 
 								return scope.colors.mismatch;
 							}
 							return '#bbbbbb';
 						}
 						if(calcType === 'edit') {
-							if(sniff(value) !== fieldType &&
-								!(sniff(value) === 'number' && (fieldType === 'uniqueNumeric' || fieldType === 'ordinalNumeric' )) &&
-								!(sniff(value) === 'text' && (fieldType === 'uniqueText' || fieldType === 'nominalText')) &&
-								!(sniff(value) === 'text' && fieldType === 'uniqueText') &&
-								fieldType !== 'binary0' ) {
+							if(sniff(value) !== field.type &&
+								!(sniff(value) === 'number' && (field.type === 'uniqueNumeric' || field.type === 'ordinalNumeric' )) &&
+								!(sniff(value) === 'text' && (field.type === 'uniqueText' || field.type === 'nominalText')) &&
+								!(sniff(value) === 'text' && field.type === 'uniqueText') &&
+								field.type !== 'binary0' ) {
 
 								return scope.colors.mismatch;
 							}
 							return '#bbbbbb';
 						}
 						if(calcType === 'type') {
-							if(fieldType === 'ordinalNumeric' && sniff(value) === 'number') {
+							if(field.type === 'ordinalNumeric' && sniff(value) === 'number') {
 								return scope.colors['ordinalNumeric'];
-							} if (fieldType === 'binary0' && uniques && (value === uniques[0].key || value === uniques[1].key)) {
-								return value === uniques[0].key ? scope.colors['binary0'] : scope.colors['binary1'];
+							} else if (field.type === 'binary0' && field.uniqueValues && (value === field.uniqueValues[0] || value === field.uniqueValues[1])) {
+								return value === field.uniqueValues[0].key ? scope.colors['binary0'] : scope.colors['binary1'];
+							} else if ( (field.type === 'ordinalNumeric' || field.type === 'nominalText') && value && field.uniqueValues.indexOf(value.split(field.mvDelimiter)[0]) !== -1) {
+								return scope.colors[field.type];
 							} else {
 								return scope.colors[sniff(value)];	
 							}

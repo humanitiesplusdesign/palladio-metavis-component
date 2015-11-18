@@ -72,8 +72,8 @@
 						<input type="text" ng-model="file.data[file.editIndex][field.key]"
 							style="width:200px; margin:0px; height: 35px;"
 							ng-focus="clearArrowEffect()"
-							ng-change="field.sortedValues[file.editIndex].color = colorCalc(file.data[file.editIndex][field.key], file.sortMode === sortModes[0] ? 'edit' : 'type', field.type, field.uniques)"
-							ng-style="{ 'color': colorCalc(file.data[file.editIndex][field.key], file.sortMode === sortModes[0] ? 'edit' : 'type', field.type, field.uniques) }"></input>
+							ng-change="field.sortedValues[file.editIndex].color = colorCalc(file.data[file.editIndex][field.key], file.sortMode === sortModes[0] ? 'edit' : 'type', field)"
+							ng-style="{ 'color': colorCalc(file.data[file.editIndex][field.key], file.sortMode === sortModes[0] ? 'edit' : 'type', field) }"></input>
 					</span>
 					<div style="height:35px; display: inline-block"
 						ng-style="{ 'margin-left': file.editIndex !== null && file.editIndex !== undefined ? '-200px' : '0px' }">
