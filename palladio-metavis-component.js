@@ -68,7 +68,7 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 								}).map(function(d) {
 									return {
 										value: d,
-										color: scope.colorCalc(d, 'type', field.type)
+										color: scope.colorCalc(d, 'type', field.type, field.uniques)
 									};
 								});
 								break;
@@ -78,7 +78,7 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 								}).map(function(d) {
 									return {
 										value: d,
-										color: scope.colorCalc(d, 'type', field.type)
+										color: scope.colorCalc(d, 'type', field.type, field.uniques)
 									};
 								}).sort(function(a,b) { return a.color < b.color ? -1 : 1; });
 								break;
@@ -147,7 +147,7 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 
 					$('#tables').scroll(function() { scope.$digest(); });
 
-					scope.colorCalc = function(value, calcType, fieldType) {
+					scope.colorCalc = function(value, calcType, fieldType, uniques) {
 						if(calcType === 'error') {
 							if(value === null || value === undefined || value === "") return scope.colors['null'];
 							if(sniff(value) !== fieldType &&
@@ -175,6 +175,8 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 						if(calcType === 'type') {
 							if(fieldType === 'ordinalNumeric' && sniff(value) === 'number') {
 								return scope.colors['ordinalNumeric'];
+							} if (fieldType === 'binary0' && uniques && (value === uniques[0].key || value === uniques[1].key)) {
+								return value === uniques[0].key ? scope.colors['binary0'] : scope.colors['binary1'];
 							} else {
 								return scope.colors[sniff(value)];	
 							}
