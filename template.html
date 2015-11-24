@@ -56,7 +56,9 @@
 						</span>
 					</div>
 					<div style="width: 35px; height:35px; display: inline-block; margin-left: -2px; padding: 5px";
-						ng-style="{ 'background-color' : file.displayType ? colors[field.type] : '#eeeeee' }">
+						ng-style="{ 'background-color' : file.displayType ? colors[field.type] : '#eeeeee' }"
+						data-toggle="tooltip" data-placement="top" title="{{typeTexts[field.type] ? typeTexts[field.type] : 'not found'}}"
+						class="dimension-type">
 						<span ng-hide="!file.reviewMode" class="pull-left"
 							style="width: 25px; font-weight: lighter; margin-top: 3px; text-align: center;"
 							ng-style="{ color: file.displayType ? textColors[field.type] : '#444444' }">

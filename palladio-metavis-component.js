@@ -1,3 +1,5 @@
+/* global angular */
+/* global d3 */
 angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 	.run(['componentService', function(componentService) {
 		var compileStringFunction = function (newScope, options) {
@@ -133,7 +135,33 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 						'null': '#444444',
 						mismatch: '#FFFFFF'
 					};
-
+					
+					scope.typeTexts = {
+						uniqueNumeric: 'Unique Numeric',
+						uniqueText: 'Unique Text',
+						numeric: 'Numeric',
+						number: 'Numeric',
+						text: 'Text',
+						binary0: 'Binary',
+						binary1: 'Binary',
+						ordinalNumeric: 'Ordinal Numeric (<10 values)',
+						nominalText: 'Nominal Text (<10 values)',
+						coordinates: 'Coordinates',
+						latlong: 'Coordinates',
+						date: 'Date',
+						YYYYMMDD: 'Date (YYYY-MM-DD)',
+						YYYYMM: 'Date (YYYY-MM)',
+						YYYY: 'Date (YYYY)',
+						url: 'URL',
+						'null': 'not defined',
+						mismatch: 'match error'
+					}
+					
+					// Set up tooltips
+					setTimeout(function() {
+						angular.element(element[0]).find('div.dimension-type').tooltip();
+					}, 100);
+					
 					scope.centerTable = function(ev) {
 						// Do this async so that page can re-render first and table container can expand.
 						function internalUpdate() {
