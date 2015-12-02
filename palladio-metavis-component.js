@@ -20,6 +20,37 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 					scope.clearArrowEffect = function() {
 						scope.fileForArrowIndexChange = null;
 					}
+					
+					scope.reparseFile = function(d) {
+						d.fields.forEach(function(f) { scope.reparseField(f,d); });
+					};
+					
+					scope.reparseField = function(f, d) {
+						// Re-parse uniques...
+						var md = parseService.parseColumn(f.key,
+							d.data, f.mvDelimiter,
+							f.hierDelimiter, [], f.type);
+						f.uniques = md.uniques;
+						f.uniqueValues = f.uniques.map(function(u) { return u.key; });
+						
+						f.detailType = f.type;
+						
+						if(f.uniqueKey && f.detailType === "number") {
+							f.detailType = 'uniqueNumeric';
+						}
+						if(f.uniqueKey && f.detailType === "text") {
+							f.detailType = 'uniqueText';
+						}
+						if(f.uniques.length === 2) {
+							f.detailType = 'binary0';
+						}
+						if(f.uniques.length > 2 && f.uniques.length < 10 && f.detailType === 'number') {
+							f.detailType = 'ordinalNumeric';
+						}
+						if(f.uniques.length > 2 && f.uniques.length < 10 && f.detailType === 'text') {
+							f.detailType = 'nominalText';
+						}
+					};
 				},
 
 				post : function(scope, element, attrs) {
@@ -28,32 +59,7 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 					scope.links = dataService.getLinks();
 					scope.maxRecords = d3.max(scope.files, function(d) { return d.data.length; });
 
-					scope.files.forEach(function(d) {
-						d.fields.forEach(function(f) {
-							// Re-parse uniques...
-							var md = parseService.parseColumn(f.key,
-								d.data, f.mvDelimiter,
-								f.hierDelimiter, [], f.type);
-							f.uniques = md.uniques;
-							f.uniqueValues = f.uniques.map(function(u) { return u.key; });
-							
-							if(f.uniqueKey && f.type === "number") {
-								f.type = 'uniqueNumeric';
-							}
-							if(f.uniqueKey && f.type === "text") {
-								f.type = 'uniqueText';
-							}
-							if(f.uniques.length === 2) {
-								f.type = 'binary0';
-							}
-							if(f.uniques.length > 2 && f.uniques.length < 10 && f.type === 'number') {
-								f.type = 'ordinalNumeric';
-							}
-							if(f.uniques.length > 2 && f.uniques.length < 10 && f.type === 'text') {
-								f.type = 'nominalText';
-							}
-						});
-					});
+					scope.files.forEach(scope.reparseFile);
 					
 					scope.sortFields = function(file) {
 						file.fields.forEach(function(f) { scope.sortField(f, file); });
@@ -158,9 +164,12 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 					}
 					
 					// Set up tooltips
-					setTimeout(function() {
-						angular.element(element[0]).find('div.dimension-type').tooltip();
-					}, 100);
+					function setTooltips() {
+						setTimeout(function() {
+							angular.element(element[0]).find('div.dimension-type').tooltip();
+						}, 100);	
+					}
+					setTooltips();
 					
 					scope.centerTable = function(ev) {
 						// Do this async so that page can re-render first and table container can expand.
@@ -175,7 +184,7 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 						if($('.table-display')[scope.files.indexOf(file)].getBoundingClientRect().left < 0 &&
 							$('.table-display')[scope.files.indexOf(file)].getBoundingClientRect().right > 500) {
 							
-							return 'fixed';
+							return 'absolute';
 						}
 						return 'relative';
 					};
@@ -185,35 +194,35 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 					scope.colorCalc = function(value, calcType, field) {
 						if(calcType === 'error') {
 							if(value === null || value === undefined || value === "") return scope.colors['null'];
-							if(sniff(value) !== field.type &&
-								!(sniff(value) === 'number' && (field.type === 'uniqueNumeric' || field.type === 'ordinalNumeric' )) &&
-								!(sniff(value) === 'text' && (field.type === 'uniqueText' || field.type === 'nominalText')) &&
-								!(sniff(value) === 'text' && field.type === 'uniqueText') &&
-								!((value.length === 4 || value.length === 7) && field.type === 'date') &&
-								field.type !== 'binary0' ) {
+							if(sniff(value) !== field.detailType &&
+								!(sniff(value) === 'number' && (field.detailType === 'uniqueNumeric' || field.detailType === 'ordinalNumeric' )) &&
+								!(sniff(value) === 'text' && (field.detailType === 'uniqueText' || field.detailType === 'nominalText')) &&
+								!(sniff(value) === 'text' && field.detailType === 'uniqueText') &&
+								!((value.length === 4 || value.length === 7) && field.detailType === 'date') &&
+								field.detailType !== 'binary0' ) {
 
 								return scope.colors.mismatch;
 							}
 							return '#bbbbbb';
 						}
 						if(calcType === 'edit') {
-							if(sniff(value) !== field.type &&
-								!(sniff(value) === 'number' && (field.type === 'uniqueNumeric' || field.type === 'ordinalNumeric' )) &&
-								!(sniff(value) === 'text' && (field.type === 'uniqueText' || field.type === 'nominalText')) &&
-								!(sniff(value) === 'text' && field.type === 'uniqueText') &&
-								field.type !== 'binary0' ) {
+							if(sniff(value) !== field.detailType &&
+								!(sniff(value) === 'number' && (field.detailType === 'uniqueNumeric' || field.detailType === 'ordinalNumeric' )) &&
+								!(sniff(value) === 'text' && (field.detailType === 'uniqueText' || field.detailType === 'nominalText')) &&
+								!(sniff(value) === 'text' && field.detailType === 'uniqueText') &&
+								field.detailType !== 'binary0' ) {
 
 								return scope.colors.mismatch;
 							}
 							return '#bbbbbb';
 						}
 						if(calcType === 'type') {
-							if(field.type === 'ordinalNumeric' && sniff(value) === 'number') {
+							if(field.detailType === 'ordinalNumeric' && sniff(value) === 'number') {
 								return scope.colors['ordinalNumeric'];
-							} else if (field.type === 'binary0' && field.uniqueValues && (value === field.uniqueValues[0] || value === field.uniqueValues[1])) {
-								return value === field.uniqueValues[0].key ? scope.colors['binary0'] : scope.colors['binary1'];
-							} else if ( (field.type === 'ordinalNumeric' || field.type === 'nominalText') && value && field.uniqueValues.indexOf(value.split(field.mvDelimiter)[0]) !== -1) {
-								return scope.colors[field.type];
+							} else if (field.detailType === 'binary0' && field.uniqueValues && (value === field.uniqueValues[0] || value === field.uniqueValues[1])) {
+								return value === field.uniqueValues[0] ? scope.colors['binary0'] : scope.colors['binary1'];
+							} else if ( (field.detailType === 'ordinalNumeric' || field.detailType === 'nominalText') && value && field.uniqueValues.indexOf(value.split(field.mvDelimiter)[0]) !== -1) {
+								return scope.colors[field.detailType];
 							} else {
 								return scope.colors[sniff(value)];	
 							}
@@ -320,7 +329,56 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 						return null;
 					};
 
-					console.log(scope.files);
+					scope.onDrop = function(obj, e){
+						console.log("Hello world");
+						scope.lastFileName = e.dataTransfer.files[0].name.replace(/\.[^/.]+$/, "") || null;
+					};
+					
+					scope.addFile =  function(text, fileName){
+	
+						// if no text return
+						if (!text || !text.length) return;
+						scope.parseError = false;
+						// let's see if the text is a URL.
+						if (text.indexOf("http") === 0 && text.indexOf("\n") === -1) {
+							try {
+								parseService.parseUrl(text).then(
+									function(csv){
+										var url = text;
+										var data = parseService.parseText(csv);
+										dataService.addFile(data, "From URL", url);
+										scope.reparseFile(dataService.getFiles()[dataService.getFiles().length-1]);
+										setTooltips();
+									},
+									function(error){
+										scope.parseError = error;
+									});
+							} catch(error) {
+								scope.parseError = error.message;
+							}
+							return;
+						}
+	
+						try {
+							var data = JSON.parse(text);
+	
+							dataService.addFile(data, scope.lastFileName);
+							scope.lastFileName = null;
+							scope.reparseFile(dataService.getFiles()[dataService.getFiles().length-1]);
+							return;
+						} catch(error) {
+							try {
+								var data = parseService.parseText(text);
+								
+								dataService.addFile(data, scope.lastFileName);
+								scope.lastFileName = null;
+								scope.reparseFile(dataService.getFiles()[dataService.getFiles().length-1]);
+							} catch(error) {
+								scope.parseError = error.message;
+							}
+						}
+						setTooltips();
+					};
 				}
 			}
 		};

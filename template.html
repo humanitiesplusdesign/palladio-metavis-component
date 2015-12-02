@@ -2,13 +2,18 @@
 	<div id="table-histograms" class="center-block container-fluid">
 		<div class="table-histogram row" ng-repeat="file in files">
 			<div class="col-md-2">
-				<span class="pull-right">{{file.label}}</span>
+				<span class="pull-right" ng-click="file.reviewMode = !file.reviewMode;">{{file.label}}</span>
 			</div>
 			<div class="col-md-8">
 				<div 
-					style="width: {{85 * file.data.length / maxRecords}}%; background-color: #D3D3D3; height: 10px; margin-top: 5px; display: inline-block">
+					style="width: {{85 * file.data.length / maxRecords}}%; background-color: #D3D3D3; height: 10px; margin-top: 5px; display: inline-block"
+					ng-click="file.reviewMode = !file.reviewMode;">
 				</div>
-				<span style="font-weight: lighter; font-size: smaller">{{file.data.length}} records</span>
+				<span style="font-weight: lighter; font-size: smaller"
+					ng-click="file.reviewMode = !file.reviewMode;">
+					
+					{{file.data.length}} records
+				</span>
 			</div>
 		</div>
 	</div>
@@ -22,7 +27,7 @@
 				<span class="labels" style="width:263px; display:inline-block">
 					<span class="table-label" style="font-weight: strong; font-size: larger">{{file.label}}</span>
 					<span class="review-label"
-						style="font-weight: strong; font-size: larger; color: red;"
+						style="font-weight: strong; font-size: larger; color: #EC5D57;"
 						ng-click="file.reviewMode = !file.reviewMode; centerTable($event);">review</span>
 				</span>
 				<span style="width: 35px; padding: 5px">
@@ -50,18 +55,18 @@
 						<span class="dimension-specials pull-right">
 							<div class="special-character" ng-repeat="special in field.special"
 								style="height: 25px; width: 25px; display: inline-block; margin-right: 2px; text-align: center; font-size: larger; font-weight: strong; border-radius: 4px;"
-								ng-style="{ 'background-color': field.unassignedSpecialChars.indexOf(special) !== -1 ? '#bbbbbb' : '#EC5D57' }">
+								ng-style="{ 'background-color': field.unassignedSpecialChars.indexOf(special) === -1 ? '#bbbbbb' : '#EC5D57' }">
 								{{special}}
 							</div>
 						</span>
 					</div>
 					<div style="width: 35px; height:35px; display: inline-block; margin-left: -2px; padding: 5px";
-						ng-style="{ 'background-color' : file.displayType ? colors[field.type] : '#eeeeee' }"
-						data-toggle="tooltip" data-placement="top" title="{{typeTexts[field.type] ? typeTexts[field.type] : 'not found'}}"
+						ng-style="{ 'background-color' : file.displayType ? colors[field.detailType] : '#eeeeee' }"
+						data-toggle="tooltip" data-placement="top" title="{{typeTexts[field.detailType] ? typeTexts[field.detailType] : 'not found'}}"
 						class="dimension-type">
 						<span ng-hide="!file.reviewMode" class="pull-left"
 							style="width: 25px; font-weight: lighter; margin-top: 3px; text-align: center;"
-							ng-style="{ color: file.displayType ? textColors[field.type] : '#444444' }">
+							ng-style="{ color: file.displayType ? textColors[field.detailType] : '#444444' }">
 							{{numberWithValue(file, field)}}
 						</span>
 					</div>
@@ -87,6 +92,36 @@
 					</div>
 				</div>
 			</div>
+			<div class="pull-left"
+				style="font-size: smaller; color: #EC5D57; margin-top: 5px; height: 35px; display: inline-block; clear: both; left: -30px;"
+				ng-click="files.splice($index, 1)">
+				
+				Remove file
+			</div>
 		</div>
-	<div>
+		<!-- Button trigger add file modal -->
+		<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#addFileModal"
+			style="display: inline-block; vertical-align:top; margin-right: 30px; margin-top: 20px;">
+			Add file
+		</button>
+	</div>
+</div>
+
+<!-- Add File Modal -->
+<div class="modal fade" id="addFileModal" tabindex="-1" role="dialog" aria-labelledby="addFileModalLabel">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="addFileModalLabel">Add File</h4>
+      </div>
+      <div class="modal-body">
+        <textarea ui-refresh="" ui-codemirror="{ mode : 'text', lineNumbers : true, lineWrapping: true, onDrop : onDrop }" placeholder="Paste your data or drop a file here" ng-model="text"></textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="text = null">Close</button>
+        <button type="button" class="btn btn-primary" ng-click="addFile(text); text = null" data-dismiss="modal">Add file</button>
+      </div>
+    </div>
+  </div>
 </div>
