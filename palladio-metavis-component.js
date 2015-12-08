@@ -51,55 +51,41 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 							f.detailType = 'nominalText';
 						}
 					};
-				},
-
-				post : function(scope, element, attrs) {
-					scope.metadata = dataService.getMetadata();
-					scope.files = dataService.getFiles();
-					scope.links = dataService.getLinks();
-					scope.maxRecords = d3.max(scope.files, function(d) { return d.data.length; });
-
-					scope.files.forEach(scope.reparseFile);
 					
-					scope.sortFields = function(file) {
-						file.fields.forEach(function(f) { scope.sortField(f, file); });
+					scope.reparseUniques = function(f,d) {
+						var md = parseService.parseColumn(f.key,
+							d.data, f.mvDelimiter,
+							f.hierDelimiter, [], f.type);
+						f.uniques = md.uniques;
+						f.uniqueValues = f.uniques.map(function(u) { return u.key; });
 					}
 					
-					scope.sortField = function(field, file) {
-						switch(file.sortMode) {
-							case 'Map errors and gaps':
-								field.sortedValues = file.data.map(function(d) {
-									return d[field.key];
-								}).map(function(d) {
-									return {
-										value: d,
-										color: scope.colorCalc(d, 'error', field)
-									};
-								});
-								break;
-							case 'Map by data types':
-								field.sortedValues = file.data.map(function(d) {
-									return d[field.key];
-								}).map(function(d) {
-									return {
-										value: d,
-										color: scope.colorCalc(d, 'type', field)
-									};
-								});
-								break;
-							case 'Sort by values':
-								field.sortedValues = file.data.map(function(d) {
-									return d[field.key];
-								}).map(function(d) {
-									return {
-										value: d,
-										color: scope.colorCalc(d, 'type', field)
-									};
-								}).sort(function(a,b) { return a.color < b.color ? -1 : 1; });
-								break;
-						}
+					scope.codemirrorLoaded = function(editor) {
+						editor.on("drop", function(c, e){
+							scope.$apply(function(s) {
+								s.lastFileName = e.dataTransfer.files[0].name.replace(/\.[^/.]+$/, "") || null;
+							})
+						});
+					};
+					
+					scope.lastFileName = null;
+					
+					scope.downloadFile = function(file) {
+						var blob = new Blob(
+							[ d3.csv.format(file.data) ],
+							{type: "text/csv;charset=utf-8"}
+						);
+						var fileName = file.label + ".csv";
+						saveAs(blob, fileName);
+					};
+					
+					scope.selectedFieldMetadata = {};
+					scope.selectedFile = {};
+					scope.assignSelectedFieldandFile = function(fld, fl) {
+						scope.selectedFieldMetadata = fld;
+						scope.selectedFile = fl;
 					}
-
+					
 					scope.colors = {
 						uniqueNumeric: '#E0CD29',
 						uniqueText: '#E07129',
@@ -163,11 +149,101 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 						mismatch: 'match error'
 					}
 					
+					scope.allowedTypes = [
+						{id: 'uniqueNumeric', name: 'Unique Numeric', description: 'Numeric and unique data such as 1234 or 1.234'},
+						{id: 'uniqueText', name: 'Unique Text', description: 'Any text-based data that is unique'},
+						{id: 'numeric', name: 'Numeric', description: 'Numeric data such as 1234 or 1.234'},
+						{id: 'text', name: 'Text', description: 'Any text-based data'},
+						{id: 'binary0', name: 'Binary', description: "Binary data such as Y/N, True/False" },
+						{id: 'ordinalNumeric', name: 'Ordinal Numeric', description: "Numeric, categorical data with a limited number (<10) of categories" },
+						{id: 'nominalText', name: 'Nominal Text', description: "Text, categorical data with a limited number (<10) or categories" },
+						{id: 'coordinates', name: 'Coordinates', description: 'Latitude, Longitude coordinates such as 12.345,67.890'},
+						{id: 'date', name: 'Date', description: 'Dates can be YYYY or YYYY-MM-DD'},
+						{id: 'url', name: 'URL', description: 'The URL of a website or image such as http://www.example.org/file.yyy'}
+					];
+					
+					scope.displayVal = function(val) {
+
+						var delimiter = null;
+	
+						var key = '<span class="small">' + val.key.split(delimiter).reduce(function(prev, curr, i, a) {
+							return prev + '&nbsp;'.repeat(i*2) + curr;
+						}, "") + '</span>';
+	
+						var multiples = val.value > 1 ? '<span class="pull-right small muted">' + val.value + '</span>' : '';
+	
+						return key + multiples;
+					};
+					
+					scope.sortOptions = [
+						{ label:'Sort by Value', value:'key', icon: 'fa-sort-alpha-asc' },
+						{ label:'Sort by Frequency', value:'value', icon: 'fa-sort-numeric-asc'}
+					];
+					
+					scope.filterSpecials = function(unassigned, verified) {
+						if(!verified) { verified = []; }
+						return unassigned.filter(function(d) { return verified.indexOf(d) === -1; });
+					}
+				},
+
+				post : function(scope, element, attrs) {
+					scope.metadata = dataService.getMetadata();
+					scope.files = dataService.getFiles();
+					scope.links = dataService.getLinks();
+					scope.maxRecords = d3.max(scope.files, function(d) { return d.data.length; });
+
+					scope.files.forEach(scope.reparseFile);
+					
+					scope.sortFields = function(file) {
+						file.fields.forEach(function(f) { scope.sortField(f, file); });
+					}
+					
+					scope.sortField = function(field, file) {
+						switch(file.sortMode) {
+							case 'Map errors and gaps':
+								field.sortedValues = file.data.map(function(d) {
+									return d[field.key];
+								}).map(function(d) {
+									return {
+										value: d,
+										color: scope.colorCalc(d, 'error', field)
+									};
+								});
+								break;
+							case 'Map by data types':
+								field.sortedValues = file.data.map(function(d) {
+									return d[field.key];
+								}).map(function(d) {
+									return {
+										value: d,
+										color: scope.colorCalc(d, 'type', field)
+									};
+								});
+								break;
+							case 'Sort by values':
+								field.sortedValues = file.data.map(function(d) {
+									return d[field.key];
+								}).map(function(d) {
+									return {
+										value: d,
+										color: scope.colorCalc(d, 'type', field)
+									};
+								}).sort(function(a,b) { return a.color < b.color ? -1 : 1; });
+								break;
+						}
+					}
+					
 					// Set up tooltips
 					function setTooltips() {
 						setTimeout(function() {
-							angular.element(element[0]).find('div.dimension-type').tooltip();
+							addTooltips();
 						}, 100);	
+					}
+					function addTooltips() {
+						angular.element(element[0]).find('div.dimension-type').tooltip();
+					}
+					function removeTooltips() {
+						angular.element(element[0]).find('div.dimension-type').tooltip('destroy');
 					}
 					setTooltips();
 					
@@ -328,11 +404,14 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 						if (isString(value)) return 'text';
 						return null;
 					};
-
-					scope.onDrop = function(obj, e){
-						console.log("Hello world");
-						scope.lastFileName = e.dataTransfer.files[0].name.replace(/\.[^/.]+$/, "") || null;
-					};
+					
+					scope.updateMetadata = function() {
+						scope.reparseUniques(scope.selectedFieldMetadata, scope.selectedFile);
+						removeTooltips();
+						setTooltips();
+					}
+					
+					scope.updateUniques = scope.updateMetadata;
 					
 					scope.addFile =  function(text, fileName){
 	
