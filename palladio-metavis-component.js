@@ -83,7 +83,6 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 					scope.selectedFieldMetadata = {};
 					scope.selectedFile = {};
 					scope.assignSelectedFieldandFile = function(fld, fl) {
-						console.log(fld);
 						scope.selectedFieldMetadata = fld;
 						scope.selectedFile = fl;
 					}
