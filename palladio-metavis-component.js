@@ -32,6 +32,7 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 							f.hierDelimiter, [], f.type);
 						f.uniques = md.uniques;
 						f.uniqueValues = f.uniques.map(function(u) { return u.key; });
+						f.sourceType = f.sourceType ? f.sourceType : null;
 						
 						f.detailType = f.type;
 						
@@ -82,6 +83,7 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 					scope.selectedFieldMetadata = {};
 					scope.selectedFile = {};
 					scope.assignSelectedFieldandFile = function(fld, fl) {
+						console.log(fld);
 						scope.selectedFieldMetadata = fld;
 						scope.selectedFile = fl;
 					}
@@ -162,6 +164,19 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 						{id: 'url', name: 'URL', description: 'The URL of a website or image such as http://www.example.org/file.yyy'}
 					];
 					
+					scope.sourceTexts = {
+						source: 'Directly from source data',
+						curated: 'Curated values based on source data',
+						authored: 'Authored information',
+						generated: 'Generated for visualization or data analysis purposes',
+						unknown: 'Unknown source'
+					};
+					
+					scope.sourceTextArray = d3.entries(scope.sourceTexts).map(function(d) {
+						d.displayKey = d.key.charAt(0).toUpperCase() + d.key.slice(1);
+						return d;
+					});
+					
 					scope.displayVal = function(val) {
 
 						var delimiter = null;
@@ -241,9 +256,11 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 					}
 					function addTooltips() {
 						angular.element(element[0]).find('div.dimension-type').tooltip();
+						angular.element(element[0]).find('i.source-type').tooltip();
 					}
 					function removeTooltips() {
 						angular.element(element[0]).find('div.dimension-type').tooltip('destroy');
+						angular.element(element[0]).find('i.source-type').tooltip('destroy');
 					}
 					setTooltips();
 					

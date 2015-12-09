@@ -112,21 +112,6 @@ strong {
   margin-bottom: 40px;
 }
 
-select, textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input {
-  display: inline-block;
-  height: 20px;
-  padding: 6px;
-  margin-bottom: 10px;
-  font-size: 14px;
-  line-height: 20px;
-  color: #555;
-  vertical-align: middle;
-  -webkit-border-radius: 0px;
-  -moz-border-radius: 0px;
-  border-radius: 0px;
-
-}
-
 textarea,
 input[type="text"],
 input[type="password"],
@@ -964,41 +949,6 @@ button.close {
 
 .angle {
   margin-top: 6px;
-}
-
-.bootstrap-select .btn {
-  background-color: #f5f5f5;
-  color: #444444;
-  font-size: 12px;
-  font-weight: 300;
-  -webkit-border-radius: 2px;
-  -moz-border-radius: 2px;
-  border-radius: 2px;
-  letter-spacing: 0px;
-  text-transform: none;
-  border: 1px solid #ddd;
-}
-
-.bootstrap-select.btn-group>.btn:first-child {
-  -webkit-border-radius: 2px;
-  -moz-border-radius: 2px;
-  border-radius: 2px;
-}
-
-.bootstrap-select .btn:hover, .bootstrap-select .btn:focus, .bootstrap-select .btn:active,
-.bootstrap-select .btn.active, .bootstrap-select .btn.disabled, .bootstrap-select .btn[disabled] {
-  color: #222;
-  background-color: #eeeeee;
-}
-
-.bootstrap-select .btn:focus {
-  outline: thin dotted #333!important;
-  outline: 0px auto -webkit-focus-ring-color!important;
-  outline-offset: -2px;
-}
-
-.bootstrap-select .btn-group.open .btn.dropdown-toggle {
-  background-color: #ddd;
 }
 
 

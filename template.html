@@ -50,9 +50,12 @@
 					<div class="dimension-main" style="height: 35px; width: 263px; background-color: #eeeeee; padding: 5px; font-weight: lighter; display: inline-block;"
 						data-toggle="modal" data-target="#dimensionEditModal"
 						ng-click="assignSelectedFieldandFile(field, file)">
-						<div style="left: 5px; background-color: #eeeeee; padding-left: 5px; padding-right: 5px; border-radius: 4px"
+						<div style="left: 5px; background-color: #eeeeee; padding-left: 5px; padding-right: 5px; border-radius: 4px; overflow: visible; width: 263px;"
 							ng-style="{ position: calcPosition(file) }">
-							<span class="pull-left" style="margin-top: 3px">{{field.description}}</span>
+							<i class="source-type fa pull-left" style="margin-top:6px; margin-right: 7px; min-width:12px;"
+								ng-class="{ 'fa-circle': field.sourceType === 'authored', 'fa-dot-circle-o': field.sourceType === 'curated', 'fa-circle-o': field.sourceType === 'source' }"
+								data-toggle="tooltip" data-placement="right" title="{{sourceTexts[field.sourceType] ? sourceTexts[field.sourceType] : 'No source information provided'}}"></i>
+							<span class="pull-left" style="margin-top: 3px">{{field.description}}{{field.mvDelimiter ? ' (M)' : ''}}</span>
 						</div>
 						<!--<span class="pull-right">
 							<button type="button" class="btn btn-xs btn-default" data-toggle="modal" data-target="#dimensionEditModal">
@@ -122,6 +125,11 @@
 			Add file
 		</button>
 	</div>
+	<div style="padding-left: 30px">
+		<div palladio-data-download data-ng-show="files.length" style="display:inline-block">
+			Download Palladio save file
+		</div>
+	</div>
 </div>
 
 <!-- Add File Modal -->
@@ -161,14 +169,31 @@
 						<div class="col-lg-2 col-md-2 col-sm-4 col-xs-4 text-right">
 							<label class="inline">Title</label>
 						</div>
-						<div class="col-lg-4 col-md-6 col-sm-8 col-xs-8 col-condensed">
-							<input
-								data-toggle="tooltip"
-								data-original-title="Rename"
-								type="text"
-								required
-								class="form-control"
-								data-ng-model="selectedFieldMetadata.description" placeholder="Untitled"></input>
+						<div class="col-lg-10 col-md-10 col-sm-8 col-xs-8 col-condensed">
+							<div class="row margin-bottom">
+									<div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+										<input
+											data-toggle="tooltip"
+											data-original-title="Rename"
+											type="text"
+											required
+											class="form-control"
+											data-ng-model="selectedFieldMetadata.description" placeholder="Untitled"></input>
+									</div>
+									<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+										<label>Source <i class="fa fa-question-circle hint" popover-trigger="mouseenter" popover="Choose a description of the source or authorship of data in this column."></i></label>
+										<ui-select ng-model="selectedFieldMetadata.sourceType" theme="selectize" append-to-body="true">
+											<ui-select-match placeholder="Select" allow-clear="true">
+												{{$select.selected.displayKey}}
+												<span class="caret"></span>
+											</ui-select-match>
+											<ui-select-choices repeat="type.key as type in sourceTextArray | filter: {key:$select.search}">
+												<span ng-bind-html="type.displayKey | highlight: $select.search"></span><br/>
+												<span class="text-muted" ng-bind-html="type.value"></span>
+											</ui-select-choices>
+										</ui-select>
+									</div>
+							</div>
 						</div>
 					</div>
 	
@@ -179,7 +204,7 @@
 						</div>
 						<div class="col-lg-9 col-md-9 col-sm-8 col-xs-8 col-condensed">
 	
-							<ui-select ng-model="selectedFieldMetadata.detailType" theme="selectize" ng-disabled="disabled" on-select="updateMetadata()">
+							<ui-select ng-model="selectedFieldMetadata.detailType" theme="selectize" ng-disabled="disabled" on-select="updateMetadata()" append-to-body="true">
 								<ui-select-match placeholder="Select or search">
 									{{$select.selected.name}}
 									<span class="caret"></span>
