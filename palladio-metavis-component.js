@@ -52,6 +52,8 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 							f.detailType = 'nominalText';
 						}
             if(f.detailType === 'numeric') f.detailType = 'number';
+            
+            if(f.verifiedSpecialChars === undefined) f.verifiedSpecialChars = [];
 					};
 					
 					scope.reparseUniques = function(f,d) {
@@ -194,6 +196,10 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 						{ label:'Sort by Value', value:'key', icon: 'fa-sort-alpha-asc' },
 						{ label:'Sort by Frequency', value:'value', icon: 'fa-sort-numeric-asc'}
 					];
+          
+          scope.displayOptions = {
+            sortBy : scope.sortOptions[0]
+          }
 					
 					scope.filterSpecials = function(unassigned, verified) {
 						if(!verified) { verified = []; }
