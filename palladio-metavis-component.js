@@ -33,8 +33,8 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 						f.uniques = md.uniques;
 						f.uniqueValues = f.uniques.map(function(u) { return u.key; });
 						f.sourceType = f.sourceType ? f.sourceType : null;
-						
-						f.detailType = f.type;
+
+						f.detailType = f.detailType ? f.detailType : (f.type ? f.type : null);
 						
 						if(f.uniqueKey && f.detailType === "number") {
 							f.detailType = 'uniqueNumeric';
@@ -51,6 +51,7 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 						if(f.uniques.length > 2 && f.uniques.length < 10 && f.detailType === 'text') {
 							f.detailType = 'nominalText';
 						}
+            if(f.detailType === 'numeric') f.detailType = 'number';
 					};
 					
 					scope.reparseUniques = function(f,d) {
@@ -153,7 +154,7 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 					scope.allowedTypes = [
 						{id: 'uniqueNumeric', name: 'Unique Numeric', description: 'Numeric and unique data such as 1234 or 1.234'},
 						{id: 'uniqueText', name: 'Unique Text', description: 'Any text-based data that is unique'},
-						{id: 'numeric', name: 'Numeric', description: 'Numeric data such as 1234 or 1.234'},
+						{id: 'number', name: 'Numeric', description: 'Numeric data such as 1234 or 1.234'},
 						{id: 'text', name: 'Text', description: 'Any text-based data'},
 						{id: 'binary0', name: 'Binary', description: "Binary data such as Y/N, True/False" },
 						{id: 'ordinalNumeric', name: 'Ordinal Numeric', description: "Numeric, categorical data with a limited number (<10) of categories" },
@@ -286,10 +287,11 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 					scope.colorCalc = function(value, calcType, field) {
 						if(calcType === 'error') {
 							if(value === null || value === undefined || value === "") return scope.colors['null'];
-							if(sniff(value) !== field.detailType &&
-								!(sniff(value) === 'number' && (field.detailType === 'uniqueNumeric' || field.detailType === 'ordinalNumeric' )) &&
-								!(sniff(value) === 'text' && (field.detailType === 'uniqueText' || field.detailType === 'nominalText')) &&
-								!(sniff(value) === 'text' && field.detailType === 'uniqueText') &&
+              var possibleValues = sniffPossible(value);
+							if(possibleValues.indexOf(field.detailType) === -1 &&
+								!(possibleValues.indexOf('number') > -1 && (field.detailType === 'uniqueNumeric' || field.detailType === 'ordinalNumeric' )) &&
+								!(possibleValues.indexOf('text') > -1 && (field.detailType === 'uniqueText' || field.detailType === 'nominalText')) &&
+								!(possibleValues.indexOf('text') > -1 && field.detailType === 'uniqueText') &&
 								!((value.length === 4 || value.length === 7) && field.detailType === 'date') &&
 								field.detailType !== 'binary0' ) {
 
@@ -298,10 +300,11 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 							return '#bbbbbb';
 						}
 						if(calcType === 'edit') {
-							if(sniff(value) !== field.detailType &&
-								!(sniff(value) === 'number' && (field.detailType === 'uniqueNumeric' || field.detailType === 'ordinalNumeric' )) &&
-								!(sniff(value) === 'text' && (field.detailType === 'uniqueText' || field.detailType === 'nominalText')) &&
-								!(sniff(value) === 'text' && field.detailType === 'uniqueText') &&
+							var possibleValues = sniffPossible(value);
+							if(possibleValues.indexOf(field.detailType) === -1 &&
+								!(possibleValues.indexOf('number') > -1 && (field.detailType === 'uniqueNumeric' || field.detailType === 'ordinalNumeric' )) &&
+								!(possibleValues.indexOf('text') > -1 && (field.detailType === 'uniqueText' || field.detailType === 'nominalText')) &&
+								!(possibleValues.indexOf('text') > -1 && field.detailType === 'uniqueText') &&
 								field.detailType !== 'binary0' ) {
 
 								return scope.colors.mismatch;
@@ -353,7 +356,8 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 					};
 
 					var isArray = function(value){
-						return value.toString() == '[object Array]';
+            if(value && value.toString) return value.toString() == '[object Array]';
+            return false;
 					};
 
 					var isNumber = function(value){
@@ -379,7 +383,8 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 					};
 
 					var isNumberLike = function(value) {
-						return !isNaN(value.replace(',','.'));
+						if(value && value.replace) return !isNaN(value.replace(',','.'));
+            return false;
 					};
 
 					var isDateLike = function(value){
@@ -391,14 +396,16 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 					};
 
 					var isLatLonLike = function(value){
-						var pieces = value.split(',');
-						if (pieces.length !== 2) return false;
-						if (isNumberLike(pieces[0]) && isNumberLike(pieces[1])) return true;
+            if(value) {
+              var pieces = value.split(',');
+              if (pieces.length !== 2) return false;
+              if (isNumberLike(pieces[0]) && isNumberLike(pieces[1])) return true; 
+            }
 						return false;
 					};
 
 					var isUrlLike = function(value){
-						if ( value.indexOf("https://") === 0 || value.indexOf("http://") === 0 || value.indexOf("www.") === 0 ) return true;
+						if(value && value.indexOf) if ( value.indexOf("https://") === 0 || value.indexOf("http://") === 0 || value.indexOf("www.") === 0 ) return true;
 						return false;
 					};
 
@@ -420,9 +427,29 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 						if (isString(value)) return 'text';
 						return null;
 					};
+          
+          var sniffPossible = function(value) {
+            var arr = [];
+            if (isObject(value)) arr.push('object');
+						if (isArray(value)) arr.push('array');
+						if (isNumber(value) && value.length === 4) { arr.push('YYYY'); }
+						if (isNumber(value)) arr.push('number');
+						// String
+						if (isUrlLike(value)) arr.push('url');
+						//if (isBooleanLike(value)) return 'boolean';
+						if (isDateLike(value) && value.length === 4) arr.push('YYYY');
+						if (isDateLike(value) && value.length === 7) arr.push('YYYYMM');
+						// if (isDateLike(value) && value.length === 10) return 'YYYYMMDD';
+						if (isDateLike(value)) arr.push('date');
+						if (isNumberLike(value)) arr.push('number');
+						if (isLatLonLike(value)) arr.push('latlong');
+						if (isString(value)) arr.push('text');
+            return arr;
+          }
 					
 					scope.updateMetadata = function() {
 						scope.reparseUniques(scope.selectedFieldMetadata, scope.selectedFile);
+            scope.sortField(scope.selectedFieldMetadata, scope.selectedFile);
 						removeTooltips();
 						setTooltips();
 					}

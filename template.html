@@ -25,15 +25,18 @@
 			ng-init="sortModes=['Map errors and gaps','Map by data types','Sort by values']; file.sortMode = sortModes[0]; sortFields(file);">
 			<div class="table-header pull-left" style="margin-bottom: 7px; overflow:hidden; white-space: nowrap; display: inline-block; clear: both;">
 				<span class="labels" style="width:263px; display:inline-block">
-					<span class="table-label" style="font-weight: strong; font-size: larger">{{file.label}}</span>
+					<!--<span class="table-label" style="font-weight: strong; font-size: larger">{{file.label}}</span>-->
+          <input tooltip-animation="false" tooltip-append-to-body="true" tooltip="Rename" data-container="body"
+            data-placement="top" type="text" class="form-control editable ng-pristine ng-untouched ng-valid table-label"
+            ng-model="file.label" placeholder="Untitled">
 					<span class="review-label"
 						style="font-weight: strong; font-size: larger; color: #EC5D57;"
 						ng-click="file.reviewMode = !file.reviewMode; centerTable($event);">review</span>
 				</span>
-				<span style="width: 35px; padding: 5px">
+				<span style="width: 35px; padding: 5px; display:inline-block;">
 					<input type="checkbox" 
 						ng-model="file.displayType"
-						style="height: 16px; width: 16px;">
+						style="height: 16px; width: 16px; margin-top:0px;">
 					</input>
 				</span>
 				<span ng-show="file.reviewMode">
@@ -50,13 +53,14 @@
 					<div class="dimension-main" style="height: 35px; width: 263px; background-color: #eeeeee; padding: 5px; font-weight: lighter; display: inline-block;"
 						data-toggle="modal" data-target="#dimensionEditModal"
 						ng-click="assignSelectedFieldandFile(field, file)">
-						<div style="left: 5px; background-color: #eeeeee; padding-left: 5px; padding-right: 5px; border-radius: 4px; overflow: visible; width: 263px;"
-							ng-style="{ position: calcPosition(file) }">
-							<i class="source-type fa pull-left" style="margin-top:6px; margin-right: 7px; min-width:12px;"
-								ng-class="{ 'fa-circle': field.sourceType === 'authored', 'fa-dot-circle-o': field.sourceType === 'curated', 'fa-circle-o': field.sourceType === 'source' }"
-								data-toggle="tooltip" data-placement="right" title="{{sourceTexts[field.sourceType] ? sourceTexts[field.sourceType] : 'No source information provided'}}"></i>
-							<span class="pull-left" style="margin-top: 3px">{{field.description}}{{field.mvDelimiter ? ' (M)' : ''}}</span>
-						</div>
+            <div style="left: 5px; overflow: visible; width: 263px;">
+              <i class="source-type fa pull-left" style="margin-top:6px; margin-right: 7px; min-width:12px;"
+                  ng-class="{ 'fa-circle': field.sourceType === 'authored', 'fa-dot-circle-o': field.sourceType === 'curated', 'fa-circle-o': field.sourceType === 'source' }"
+                  data-toggle="tooltip" data-placement="right" title="{{sourceTexts[field.sourceType] ? sourceTexts[field.sourceType] : 'No source information provided'}}"></i>
+              <div style="padding-left: 5px; padding-right: 5px; border-radius: 4px; background-color: #eeeeee;" ng-style="{ position: calcPosition(file) }">
+                <span class="pull-left field-description">{{field.description}}{{field.mvDelimiter ? ' (M)' : ''}}</span>
+              </div>
+            </div>
 						<!--<span class="pull-right">
 							<button type="button" class="btn btn-xs btn-default" data-toggle="modal" data-target="#dimensionEditModal">
 								Edit
