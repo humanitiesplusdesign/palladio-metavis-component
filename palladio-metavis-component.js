@@ -107,7 +107,7 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 						YYYYMM: '#88A1C0',
 						YYYY: '#A9BBD2',
 						url: '#C0A788',
-						'null': '#FFFFFF',
+						'null': '#EEEEEE',
 						mismatch: '#EC5D57'
 					};
 
