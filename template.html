@@ -21,7 +21,7 @@
 	<div id="tables" data-ng-if="displayTables"
 			style="overflow-x:scroll; white-space: nowrap; margin-bottom: 2px; height: 100%; padding-left: 30px">
 		<div class="table-display" ng-repeat="file in files"
-			style="display: inline-block; vertical-align:top; margin-right: 30px;"
+			style="vertical-align:top; margin-right: 30px;"
 			ng-init="sortModes=['Map errors and gaps','Map by data types','Sort by values']; file.sortMode = sortModes[0]; sortFields(file); file.displayType = displayTypes; file.reviewMode = expanded;">
 			<div class="table-header pull-left" style="margin-bottom: 7px; overflow:hidden; white-space: nowrap; display: inline-block; clear: both;">
 				<span class="labels" style="width:263px; display:inline-block">
