@@ -1,13 +1,12 @@
 {
-  "name": "palladio-alluvial-component",
-  "version": "0.0.0",
+  "name": "palladio-metavis-component",
   "homepage": "https://github.com/humanitiesplusdesign/palladio-metavis-component",
   "authors": [
-    "Ethan Jewett <esjewett@gmail.com>"
+    "Ethan Jewett <ethan.jewett@coredatra.com>"
   ],
   "description": "A component for metadata visualization and editing in Palladio",
   "dependencies": {
-    "palladio": "1.2.0-beta.01"
+    "palladio": "1.2.3"
   },
   "main": "palladio-metavis-component.js",
   "license": "BSD 3-clause",

@@ -1,5 +1,5 @@
 <div id="main">
-	<div id="table-histograms" class="center-block container-fluid">
+	<div id="table-histograms" data-ng-if="displayOverview" class="center-block container-fluid">
 		<div class="table-histogram row" ng-repeat="file in files">
 			<div class="col-md-2">
 				<span class="pull-right" ng-click="file.reviewMode = !file.reviewMode;">{{file.label}}</span>
@@ -18,11 +18,11 @@
 		</div>
 	</div>
 	<div class="clearfix" style="height:50px"></div>
-	<div id="tables" 
+	<div id="tables" data-ng-if="displayTables"
 			style="overflow-x:scroll; white-space: nowrap; margin-bottom: 2px; height: 100%; padding-left: 30px">
 		<div class="table-display" ng-repeat="file in files"
 			style="display: inline-block; vertical-align:top; margin-right: 30px;"
-			ng-init="sortModes=['Map errors and gaps','Map by data types','Sort by values']; file.sortMode = sortModes[0]; sortFields(file);">
+			ng-init="sortModes=['Map errors and gaps','Map by data types','Sort by values']; file.sortMode = sortModes[0]; sortFields(file); file.displayType = displayTypes; file.reviewMode = expanded;">
 			<div class="table-header pull-left" style="margin-bottom: 7px; overflow:hidden; white-space: nowrap; display: inline-block; clear: both;">
 				<span class="labels" style="width:263px; display:inline-block">
 					<!--<span class="table-label" style="font-weight: strong; font-size: larger">{{file.label}}</span>-->
@@ -93,6 +93,7 @@
 						ng-style="{ left: file.editIndex*4 }">
 						<input type="text" ng-model="file.data[file.editIndex][field.key]"
 							style="width:200px; margin:0px; height: 35px;"
+							ng-disabled = "!modifiable"
 							ng-focus="clearArrowEffect()"
 							ng-change="field.sortedValues[file.editIndex].color = colorCalc(file.data[file.editIndex][field.key], file.sortMode === sortModes[0] ? 'edit' : 'type', field)"
 							ng-style="{ 'color': colorCalc(file.data[file.editIndex][field.key], file.sortMode === sortModes[0] ? 'edit' : 'type', field) }"></input>
@@ -107,24 +108,24 @@
 					</div>
 				</div>
 			</div>
-			<div class="pull-left"
-				style="font-size: smaller; color: #EC5D57; margin-top: 5px; height: 35px; display: inline-block; clear: left; left: -30px;"
-				ng-click="files.splice($index, 1)">
-				
-				Remove file
-			</div>
 			<div
 				class="pull-left"
-				style="display: inline-block; margin-top: 3px; margin-left: 5px;"
+				style="display: inline-block; margin-top: 3px; margin-left: 5px; clear: left;"
 				tooltip-append-to-body="true"
 				tooltip="Download as .csv"
 				tooltip-placement="right"
 				data-ng-click="downloadFile(file)">
 					<i class="fa fa-download"></i>
 			</div>
+			<div class="pull-left" data-ng-if="modifiable"
+				style="font-size: smaller; color: #EC5D57; margin-top: 5px; margin-left: 5px; height: 35px; display: inline-block;"
+				ng-click="files.splice($index, 1)">
+				
+				Remove file
+			</div>
 		</div>
 	</div>
-	<div style="padding-left: 30px">
+	<div style="padding-left: 30px" data-ng-if="modifiable">
 		<!-- Button trigger add file modal -->
 		<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#addFileModal">
 			Add file

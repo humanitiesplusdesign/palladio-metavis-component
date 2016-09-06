@@ -8,7 +8,7 @@
         <!-- Palladio -->
         <link type="text/css" href="../bower_components/palladio/palladio.css" rel="stylesheet" />
         <link type="text/css" href="css/standalone.css" rel="stylesheet" />
-        <link type="text/css" href="../palladio-metavis-component.css" rel="stylesheet" />  
+        <link type="text/css" href="../dist/palladio-metavis-component.css" rel="stylesheet" />  
 
         <!-- Font Awesome -->
         <link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
@@ -16,17 +16,28 @@
 
     <body>
 
+        <div id="metaview-here"></div>
         <div id="metavis-here"></div>
 
         <script src="../bower_components/palladio/palladio.js"></script>
-        <script src="../palladio-metavis-component.js"></script>
+        <script src="../dist/palladio-metavis-component.js"></script>
 
         <script>
             var components = startPalladio(['palladioMetavis']);
 
             components.loadData('sample3.json', function() {
                 components.add('metavis', "#metavis-here");
+
+                components.add('metavis', "#metaview-here", {
+                    modifiable: false,
+                    expanded: true,
+                    displayTypes: true,
+                    displayOverview: false,
+                    displayIndex: 2
+                });
             });
+
+            
         </script>
 
     </body>
