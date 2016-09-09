@@ -81,7 +81,7 @@
 						class="dimension-type">
 						<span ng-hide="!file.reviewMode" class="pull-left"
 							style="width: 25px; font-weight: lighter; text-align: center;"
-							ng-style="{ color: file.displayType ? textColors[field.detailType] : '#444444', 'font-size': numberWithValue(file, field)>999 ? 'smaller' : 'inherit', 'margin-top': numberWithValue(file, field)>999 ? '4px' : '3px' }">
+							ng-style="{ color: file.displayType ? textColors[field.detailType] : '#444444', 'font-size': numberWithValue(file, field)>999 ? (numberWithValue(file, field)>9999 ? '10px' : '11.5px') : 'inherit', 'margin-top': numberWithValue(file, field)>999 ? '4px' : '3px' }">
 							{{numberWithValue(file, field)}}
 						</span>
 					</div>
