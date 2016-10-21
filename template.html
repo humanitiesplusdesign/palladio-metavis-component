@@ -26,14 +26,12 @@
 			<div class="table-header pull-left" style="margin-bottom: 7px; overflow:hidden; white-space: nowrap; display: inline-block; clear: both;">
 				<span class="labels" style="width:263px; display:inline-block">
 					<!--<span class="table-label" style="font-weight: strong; font-size: larger">{{file.label}}</span>-->
-					<span data-ng-if="displayReview">
-						<input tooltip-animation="false" tooltip-append-to-body="true" tooltip="Rename" data-container="body"
-							data-placement="top" type="text" class="form-control editable ng-pristine ng-untouched ng-valid table-label"
-							ng-model="file.label" placeholder="Untitled">
-						<span class="review-label"
-							style="font-weight: strong; font-size: larger; color: #EC5D57;"
-							ng-click="file.reviewMode = !file.reviewMode; centerTable($event);">review</span>
-					</span>
+					<input tooltip-animation="false" tooltip-append-to-body="true" tooltip="Rename" data-container="body"
+						data-placement="top" type="text" class="form-control editable ng-pristine ng-untouched ng-valid table-label"
+						ng-model="file.label" placeholder="Untitled">
+					<span class="review-label" data-ng-if="displayReview"
+						style="font-weight: strong; font-size: larger; color: #EC5D57;"
+						ng-click="file.reviewMode = !file.reviewMode; centerTable($event);">review</span>
 				</span>
 				<span style="width: 35px; padding: 5px; display:inline-block;">
 					<input type="checkbox" 
