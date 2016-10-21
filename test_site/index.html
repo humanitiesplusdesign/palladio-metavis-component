@@ -26,11 +26,14 @@
             var components = startPalladio(['palladioMetavis']);
 
             components.loadData('sample3.json', function() {
-                components.add('metavis', "#metavis-here");
+                components.add('metavis', "#metavis-here", {
+                    displayReview: true
+                });
 
                 components.add('metavis', "#metaview-here", {
                     modifiable: false,
                     expanded: true,
+                    displayPills: true,
                     displayTypes: true,
                     displayOverview: false,
                     displayIndex: 2

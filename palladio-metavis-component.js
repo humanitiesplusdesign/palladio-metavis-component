@@ -7,6 +7,8 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 			newScope.displayOverview = newScope.displayOverview !== undefined ? newScope.displayOverview : 'true';
 			newScope.displayTables = newScope.displayTables !== undefined ? newScope.displayTables : 'true';
 			newScope.displayTypes = newScope.displayTypes !== undefined ? newScope.displayTypes : 'false';
+			newScope.displayPills = newScope.displayPills !== undefined ? newScope.displayPills : 'false';
+			newScope.displayReview = newScope.displayReview !== undefined ? newScope.displayReview : 'false';
 			newScope.expanded = newScope.expanded !== undefined ? newScope.expanded : 'false';
 			newScope.displayIndex = newScope.displayIndex !== undefined ? newScope.displayIndex : 'all';
 
@@ -16,6 +18,8 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 			compileString += 'display-tables="' + newScope.displayTables + '" ';
 			compileString += 'display-index="' + newScope.displayIndex + '" ';
 			compileString += 'display-types="' + newScope.displayTypes + '" ';
+			compileString += 'display-pills="' + newScope.displayPills + '" ';
+			compileString += 'display-review="' + newScope.displayReview + '" ';
 			compileString += 'expanded="' + newScope.expanded + '" ';
 			compileString += ' ></div>';
 			return compileString;
@@ -31,7 +35,9 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 				displayOverview: '=',
 				displayTables: '=',
 				displayIndex: '@',
-				displayTypes: '='
+				displayTypes: '=',
+				displayReview: '=',
+				displayPills: '='
 			},
 			templateUrl : 'partials/palladio-metavis-component/template.html',
 			link : {

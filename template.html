@@ -26,12 +26,14 @@
 			<div class="table-header pull-left" style="margin-bottom: 7px; overflow:hidden; white-space: nowrap; display: inline-block; clear: both;">
 				<span class="labels" style="width:263px; display:inline-block">
 					<!--<span class="table-label" style="font-weight: strong; font-size: larger">{{file.label}}</span>-->
-          <input tooltip-animation="false" tooltip-append-to-body="true" tooltip="Rename" data-container="body"
-            data-placement="top" type="text" class="form-control editable ng-pristine ng-untouched ng-valid table-label"
-            ng-model="file.label" placeholder="Untitled">
-					<span class="review-label"
-						style="font-weight: strong; font-size: larger; color: #EC5D57;"
-						ng-click="file.reviewMode = !file.reviewMode; centerTable($event);">review</span>
+					<span data-ng-if="displayReview">
+						<input tooltip-animation="false" tooltip-append-to-body="true" tooltip="Rename" data-container="body"
+							data-placement="top" type="text" class="form-control editable ng-pristine ng-untouched ng-valid table-label"
+							ng-model="file.label" placeholder="Untitled">
+						<span class="review-label"
+							style="font-weight: strong; font-size: larger; color: #EC5D57;"
+							ng-click="file.reviewMode = !file.reviewMode; centerTable($event);">review</span>
+					</span>
 				</span>
 				<span style="width: 35px; padding: 5px; display:inline-block;">
 					<input type="checkbox" 
@@ -66,7 +68,7 @@
 								Edit
 							</button>
 						</span>-->
-						<span class="dimension-specials pull-right">
+						<span class="dimension-specials pull-right" data-ng-if="displayPills">
 							<div class="special-character" ng-repeat="special in field.special"
 								style="color: #FFFFFF; height: 25px; width: 25px; display: inline-block; margin-right: 2px; text-align: center; font-size: larger; font-weight: strong; border-radius: 4px;"
 								ng-style="{ 'background-color': filterSpecials(field.unassignedSpecialChars, field.verifiedSpecialChars).indexOf(special) === -1 ? '#bbbbbb' : '#EC5D57' }"
