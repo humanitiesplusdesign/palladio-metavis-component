@@ -28,7 +28,7 @@
 					<!--<span class="table-label" style="font-weight: strong; font-size: larger">{{file.label}}</span>-->
 					<input tooltip-animation="false" tooltip-append-to-body="true" tooltip="Rename" data-container="body"
 						data-placement="top" type="text" class="form-control editable ng-pristine ng-untouched ng-valid table-label"
-						ng-model="file.label" placeholder="Untitled">
+						ng-model="file.label" placeholder="Untitled" ng-disabled="!modifiable">
 					<span class="review-label" data-ng-if="displayReview"
 						style="font-weight: strong; font-size: larger; color: #EC5D57;"
 						ng-click="file.reviewMode = !file.reviewMode; centerTable($event);">review</span>
@@ -109,6 +109,7 @@
 				</div>
 			</div>
 			<div
+				data-ng-if="displayDownload"
 				class="pull-left"
 				style="display: inline-block; margin-top: 3px; margin-left: 5px; clear: left;"
 				tooltip-append-to-body="true"

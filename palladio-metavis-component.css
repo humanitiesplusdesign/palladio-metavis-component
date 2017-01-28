@@ -5,6 +5,10 @@
     width: 16px;
 }
 
+[data-palladio-metavis] .form-control[disabled] {
+  background-color: initial
+}
+
 [data-palladio-metavis] .table-label {
   max-width: 200px;
   display: inline-block;
