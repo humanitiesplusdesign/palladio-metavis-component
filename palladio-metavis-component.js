@@ -47,6 +47,7 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 				pre : function(scope, element) {
 
 					scope.fileForArrowIndexChange = null;
+					scope.editModalId = 'dimensionEditModal' + Math.round(Math.random() * 10000)
 					
 					scope.clearArrowEffect = function() {
 						scope.fileForArrowIndexChange = null;
@@ -119,6 +120,7 @@ angular.module('palladioMetavis', ['palladio', 'palladio.services'])
 					scope.assignSelectedFieldandFile = function(fld, fl) {
 						scope.selectedFieldMetadata = fld;
 						scope.selectedFile = fl;
+						if(scope.modifiable) $('#'+scope.editModalId).modal({ show: true })
 					}
 					
 					scope.colors = {

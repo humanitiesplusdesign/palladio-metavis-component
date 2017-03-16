@@ -51,7 +51,6 @@
 				style="overflow:hidden; white-space: nowrap; margin-bottom: 2px; height: 35px; display: inline-block; clear: both; left: -30px;">
 				<div style="height: 35px; width: 300px; display: inline-block; left: 0px;">
 					<div class="dimension-main" style="height: 35px; width: 263px; background-color: #eeeeee; padding: 5px; font-weight: lighter; display: inline-block;"
-						data-toggle="modal" data-target="#dimensionEditModal"
 						ng-click="assignSelectedFieldandFile(field, file)">
             <div style="left: 5px; overflow: visible; width: 263px;">
               <i class="source-type fa pull-left" style="margin-top:6px; margin-right: 7px; min-width:12px;"
@@ -61,11 +60,6 @@
                 <span class="pull-left field-description">{{field.description}}{{field.mvDelimiter ? ' (M)' : ''}}</span>
               </div>
             </div>
-						<!--<span class="pull-right">
-							<button type="button" class="btn btn-xs btn-default" data-toggle="modal" data-target="#dimensionEditModal">
-								Edit
-							</button>
-						</span>-->
 						<span class="dimension-specials pull-right" data-ng-if="displayPills">
 							<div class="special-character" ng-repeat="special in field.special"
 								style="color: #FFFFFF; height: 25px; width: 25px; display: inline-block; margin-right: 2px; text-align: center; font-size: larger; font-weight: strong; border-radius: 4px;"
@@ -158,7 +152,7 @@
 
 <!-- Dimension edit modal -->
 
-<div class="modal" id="dimensionEditModal" tabindex="-1" role="dialog" aria-labelledby="dimensionEditModalLabel" aria-hidden="true">
+<div class="modal" id="{{editModalId}}" tabindex="-1" role="dialog" aria-labelledby="dimensionEditModalLabel" aria-hidden="true">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<!-- Modal Header -->
